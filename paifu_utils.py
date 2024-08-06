@@ -17,11 +17,12 @@ def count_kyoku(json_data):
 
 def extract_one_kyoku(json_data, kyoku_num):
     max_kyoku_num = count_kyoku(json_data)
-    if kyoku_num < 1:
+    if kyoku_num < 0:
         raise ValueError(f"kyoku_num: {kyoku_num} must be larger than 0.")
-    elif max_kyoku_num < kyoku_num:
+    elif max_kyoku_num <= kyoku_num:
         raise ValueError(f"kyoku_num: {kyoku_num} is too large.")
 
+    kyoku_num += 1
     kyoku = []
     for entry in json_data:
         if entry["cmd"] == "kyokustart":

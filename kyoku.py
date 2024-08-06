@@ -149,11 +149,14 @@ class Kyoku:
             self.players[player_name].show()
 
     def get_data(self):
+        def nlbs(lst, size):  # normalize list by size
+            return [v / size for v in lst]
+
         current_data = []
 
         if 0 < len(self.teban):
             dora_data = [self.dora[idx] if idx < len(self.dora) else 0 for idx in range(4)]
-            current_data.extend(dora_data)
+            current_data.extend(nlbs(dora_data, len(code2hai) - 1))
 
             teban_idx = self.player_names.index(self.teban[-1].name)
             for rel_idx in range(4):
@@ -163,13 +166,13 @@ class Kyoku:
 
                 # 手番のプレイヤーの手牌
                 if rel_idx == 0:  # teban
-                    current_data.extend(player.get_tehai_data())
-                    current_data.append(player.get_tsumo_data())
+                    current_data.extend(nlbs(player.get_tehai_data(), len(code2hai) - 1))
+                    current_data.append(player.get_tsumo_data() / (len(code2hai) - 1))
 
-                current_data.extend(player.get_furo_data())
-                current_data.extend(player.get_sutehai_data())
-                current_data.extend(player.get_tsumogiri_flags())
-                current_data.extend(player.get_richi_flags())
-                current_data.extend(player.get_naki_flags())
+                current_data.extend(nlbs(player.get_furo_data(), len(code2hai) - 1))
+                current_data.extend(nlbs(player.get_sutehai_data(), len(code2hai) - 1))
+                current_data.extend(nlbs(player.get_tsumogiri_flags(), 2))
+                current_data.extend(nlbs(player.get_richi_flags(), 2))
+                current_data.extend(nlbs(player.get_naki_flags(), 2))
 
         return current_data
