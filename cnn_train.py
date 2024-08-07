@@ -1,7 +1,7 @@
 import argparse
 import torch
 
-from paifu import load_paifu_data, make_dataset, make_dataloader, train_model, test_model
+from paifu_data import load_paifu_data, make_dataset, make_dataloader, train_model, test_model
 from pai_const import code2hai
 
 from cnn_model import CnnModel
