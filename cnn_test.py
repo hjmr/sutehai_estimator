@@ -37,8 +37,8 @@ dataset = make_dataset(inp, tgt, device=device)
 kyoku = Kyoku(kyoku_data)
 
 # load trained model
-model = CnnModel(len(code2hai), features=3392, hidden_dim=256, channels=(32, 64), kernel_sizes=(3, 3), device=device)
-# model = CnnModel(len(code2hai), features=3328, hidden_dim = 256, channels=(32, 64), kernel_sizes=(5, 5), device=device)
+# model = CnnModel(len(code2hai), features=3392, hidden_dim=256, channels=(32, 64), kernel_sizes=(3, 3), device=device)
+model = CnnModel(len(code2hai), features=3328, hidden_dim=256, channels=(32, 64), kernel_sizes=(5, 5), device=device)
 # model = CnnModel(len(code2hai), features=3264, hidden_dim = 256, channels=(32, 64), kernel_sizes=(7, 7), device=device)
 model.load_state_dict(torch.load(args.model))
 
