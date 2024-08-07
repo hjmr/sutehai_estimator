@@ -9,16 +9,15 @@ class Kyoku:
         for player_name in self.player_names:
             self.players[player_name] = Player(player_name, self)
 
+        self.kyoku_data = kyoku_data
+        self.current_step = 0
+        self.teban = []
         self.oya = None
         self.dora = []
         self.honba = 0
         self.bakaze = 0
+
         self.ryukyoku = False
-
-        self.kyoku_data = kyoku_data
-        self.current_step = 0
-        self.teban = []
-
         self.is_tsumo = False
         self.is_sutehai = False
 
@@ -59,6 +58,10 @@ class Kyoku:
         playing = self.commands[entry["cmd"]](entry["args"])
         self.current_step += 1
         return playing
+
+    def fast_forward(self, steps):
+        while self.current_step < steps:
+            self.step()
 
     def do_dummy(self, args):
         return True

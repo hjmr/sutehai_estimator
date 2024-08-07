@@ -24,7 +24,7 @@ elif torch.backends.mps.is_available():
     device = torch.device("mps")
 print(f"device: {device}")
 
-input_data, target_data = load_paifu_data(args.files)
+input_data, target_data, _ = load_paifu_data(args.files)  # drop kyoku_steps
 dataset = make_dataset(input_data, target_data, device=device)
 train_loader, test_loader = make_dataloader(dataset, batch_size=args.batch_size)
 

@@ -8,16 +8,19 @@ from paifu_utils import load_paifu, count_kyoku, extract_one_kyoku
 
 def make_data_for_one_kyoku(kyoku_json):
     kyoku = Kyoku(kyoku_json)
+    stps = []
     inp = []
     tgt = []
     while kyoku.step():
         if kyoku.is_sutehai:
+            stps.append(kyoku.current_step)
             inp.append(kyoku.get_data())
             tgt.append(kyoku.teban[-1].sutehai[-1])
-    return inp, tgt
+    return inp, tgt, stps
 
 
 def load_paifu_data(files):
+    kyoku_steps = []
     input_data = []
     target_data = []
 
@@ -26,10 +29,11 @@ def load_paifu_data(files):
         kyoku_num = count_kyoku(json_data)
         for idx in range(kyoku_num):
             kyoku_json = extract_one_kyoku(json_data, idx)
-            inp, tgt = make_data_for_one_kyoku(kyoku_json)
+            inp, tgt, stp = make_data_for_one_kyoku(kyoku_json)
+            kyoku_steps.extend(stp)
             input_data.extend(inp)
             target_data.extend(tgt)
-    return input_data, target_data
+    return input_data, target_data, kyoku_steps
 
 
 def make_dataset(input_data, target_data, device="cpu"):
