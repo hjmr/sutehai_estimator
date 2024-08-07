@@ -49,4 +49,5 @@ with torch.no_grad():
         print("--------------------------------------------------")
         kyoku.fast_forward(stps[idx])
         kyoku.show()
-        print(code2disp[target.item()], code2disp[predicted.item()])
+        judge = "[OK]" if target.item() == predicted.item() else "*NG*"
+        print(f"{judge} target:{code2disp[target.item()]} predict:{code2disp[predicted.item()]}")
