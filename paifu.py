@@ -6,7 +6,7 @@ from kyoku import Kyoku
 from paifu_utils import load_paifu, count_kyoku, extract_one_kyoku
 
 
-def load_one_kyoku(kyoku_json):
+def make_data_for_one_kyoku(kyoku_json):
     kyoku = Kyoku(kyoku_json)
     inp = []
     tgt = []
@@ -26,7 +26,7 @@ def load_paifu_data(files):
         kyoku_num = count_kyoku(json_data)
         for idx in range(kyoku_num):
             kyoku_json = extract_one_kyoku(json_data, idx)
-            inp, tgt = load_one_kyoku(kyoku_json)
+            inp, tgt = make_data_for_one_kyoku(kyoku_json)
             input_data.extend(inp)
             target_data.extend(tgt)
     return input_data, target_data
