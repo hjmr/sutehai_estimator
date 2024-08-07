@@ -9,12 +9,14 @@ class LinearModel(torch.nn.Module):
     def __init__(self, input_dim, hidden_dim, output_dim, device="cpu"):
         super(LinearModel, self).__init__()
         self.layer1 = torch.nn.Linear(input_dim, hidden_dim, device=device)
-        self.layer2 = torch.nn.Linear(hidden_dim, output_dim, device=device)
+        self.layer2 = torch.nn.Linear(hidden_dim, hidden_dim, device=device)
+        self.layer3 = torch.nn.Linear(hidden_dim, output_dim, device=device)
         self.logsoftmax = torch.nn.LogSoftmax(dim=1)
 
     def forward(self, x):
         h1 = torch.relu(self.layer1(x))
-        o = self.logsoftmax(self.layer2(h1))
+        h2 = torch.relu(self.layer2(h1))
+        o = self.logsoftmax(self.layer3(h2))
         return o
 
 
@@ -42,7 +44,10 @@ train_loader, test_loader = make_dataloader(dataset, batch_size=args.batch_size)
 input_dim = len(input_data[0])
 output_dim = len(code2hai)
 
-model = LinearModel(input_dim, 128, output_dim, device=device)
+model = LinearModel(input_dim, 700, output_dim, device=device)
+total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print(f"# of parameters: {total_params}")
+
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
 
