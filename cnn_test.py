@@ -27,12 +27,6 @@ elif torch.backends.mps.is_available():
     device = torch.device("mps")
 print(f"device: {device}")
 
-# load trained model
-model = CnnModel(len(code2hai), features=3392, hidden_dim=256, channels=(32, 64), kernel_sizes=(3, 3), device=device)
-# model = CnnModel(len(code2hai), features=3328, hidden_dim = 256, channels=(32, 64), kernel_sizes=(5, 5), device=device)
-# model = CnnModel(len(code2hai), features=3264, hidden_dim = 256, channels=(32, 64), kernel_sizes=(7, 7), device=device)
-model.load_state_dict(torch.load(args.model))
-
 # load paifu data
 json_data = load_paifu(args.paifu)
 kyoku_data = extract_one_kyoku(json_data, args.kyoku)
@@ -41,6 +35,12 @@ dataset = make_dataset(inp, tgt, device=device)
 
 # prepare kyoku for display
 kyoku = Kyoku(kyoku_data)
+
+# load trained model
+model = CnnModel(len(code2hai), features=3392, hidden_dim=256, channels=(32, 64), kernel_sizes=(3, 3), device=device)
+# model = CnnModel(len(code2hai), features=3328, hidden_dim = 256, channels=(32, 64), kernel_sizes=(5, 5), device=device)
+# model = CnnModel(len(code2hai), features=3264, hidden_dim = 256, channels=(32, 64), kernel_sizes=(7, 7), device=device)
+model.load_state_dict(torch.load(args.model))
 
 model.eval()
 with torch.no_grad():
