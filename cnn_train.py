@@ -28,7 +28,9 @@ input_data, target_data = load_paifu_data(args.files)
 dataset = make_dataset(input_data, target_data, device=device)
 train_loader, test_loader = make_dataloader(dataset, batch_size=args.batch_size)
 
-model = CnnModel(len(code2hai), device=device)
+model = CnnModel(len(code2hai), features=3392, hidden_dim=256, channels=(32, 64), kernel_sizes=(3, 3), device=device)
+# model = CnnModel(len(code2hai), features=3328, hidden_dim = 256, channels=(32, 64), kernel_sizes=(5, 5), device=device)
+# model = CnnModel(len(code2hai), features=3264, hidden_dim = 256, channels=(32, 64), kernel_sizes=(7, 7), device=device)
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print(f"# of parameters: {total_params}")
 
