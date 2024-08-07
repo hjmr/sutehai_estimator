@@ -10,6 +10,7 @@ from linear_model import LinearModel
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int, default=64, help="batch size")
+    parser.add_argument("--hidden", type=int, default=700, help="hidden size")
     parser.add_argument("--dev", type=str, help="device")
     parser.add_argument("files", nargs="+", help="paifu files")
     return parser.parse_args()
@@ -31,7 +32,7 @@ train_loader, test_loader = make_dataloader(dataset, batch_size=args.batch_size)
 input_dim = len(input_data[0])
 output_dim = len(code2hai)
 
-model = LinearModel(input_dim, 700, output_dim, device=device)
+model = LinearModel(input_dim, args.hidden, output_dim, device=device)
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
 print(f"# of parameters: {total_params}")
 
