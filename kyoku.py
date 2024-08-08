@@ -16,10 +16,8 @@ class Kyoku:
         self.dora = []
         self.honba = 0
         self.bakaze = 0
-
         self.ryukyoku = False
-        self.is_tsumo = False
-        self.is_sutehai = False
+        self.was_sutehai = False
 
         # fmt: off
         self.commands = {
@@ -49,15 +47,16 @@ class Kyoku:
 
     def step(self):
         playing = True
-        self.is_sutehai = False
-        self.is_tsumo = False
-
+        self.was_sutehai = False
         entry = self.kyoku_data[self.current_step]
         if entry["cmd"] not in self.commands:
             raise ValueError(f"Invalid command: {entry['cmd']}")
         playing = self.commands[entry["cmd"]](entry["args"])
         self.current_step += 1
         return playing
+
+    def will_sutehai(self):
+        return self.kyoku_data[self.current_step]["cmd"] == "sutehai"
 
     def fast_forward(self, steps):
         while self.current_step < steps:
@@ -92,7 +91,6 @@ class Kyoku:
         player = self.get_player(args[0])
         tsumo_code = code2hai.index(args[2])
         player.do_tsumo(tsumo_code)
-        self.is_tsumo = True
         return True
 
     def do_sutehai(self, args):
@@ -100,7 +98,7 @@ class Kyoku:
         sutehai_code = code2hai.index(args[1])
         tsumogiri = True if len(args) == 3 and args[2] == "tsumogiri" else False
         player.do_sutehai(sutehai_code, tsumogiri)
-        self.is_sutehai = True
+        self.was_sutehai = True
         return True
 
     def do_dora(self, args):

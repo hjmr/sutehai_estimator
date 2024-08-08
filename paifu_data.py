@@ -12,10 +12,11 @@ def make_data_for_one_kyoku(kyoku_json):
     inp = []
     tgt = []
     while kyoku.step():
-        if kyoku.is_sutehai:
+        if kyoku.was_sutehai:
+            tgt.append(kyoku.teban[-1].sutehai[-1])
+        if kyoku.will_sutehai():
             stps.append(kyoku.current_step)
             inp.append(kyoku.get_data())
-            tgt.append(kyoku.teban[-1].sutehai[-1])
     return inp, tgt, stps
 
 
