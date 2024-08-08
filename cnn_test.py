@@ -11,9 +11,13 @@ from pai_const import code2hai, code2disp
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dev", type=str, help="device")
+    parser.add_argument("--features", type=int, default=3328, help="# of features (output of convolution layers)")
+    parser.add_argument("--hidden", type=int, default=256, help="# of hidden units in fully connected layer")
+    parser.add_argument("--channels", type=int, nargs=2, default=(32, 64), help="# of channels in convolution layers")
+    parser.add_argument("--kernel_sizes", type=int, nargs=2, default=(5, 5), help="kernel sizes in convolution layers")
     parser.add_argument("--paifu", type=str, help="paifu file")
     parser.add_argument("--kyoku", type=int, default=0, help="kyoku index")
+    parser.add_argument("--dev", type=str, help="device")
     parser.add_argument("model", help="model file")
     return parser.parse_args()
 
@@ -37,9 +41,14 @@ dataset = make_dataset(inp, tgt, device=device)
 kyoku = Kyoku(kyoku_data)
 
 # load trained model
-# model = CnnModel(len(code2hai), features=3392, hidden_dim=256, channels=(32, 64), kernel_sizes=(3, 3), device=device)
-model = CnnModel(len(code2hai), features=3328, hidden_dim=256, channels=(32, 64), kernel_sizes=(5, 5), device=device)
-# model = CnnModel(len(code2hai), features=3264, hidden_dim = 256, channels=(32, 64), kernel_sizes=(7, 7), device=device)
+model = CnnModel(
+    len(code2hai),
+    features=args.features,
+    hidden_dim=args.hidden,
+    channels=tuple(args.channels),
+    kernel_sizes=tuple(args.kernel_sizes),
+    device=device,
+)
 model.load_state_dict(torch.load(args.model))
 
 model.eval()

@@ -11,10 +11,10 @@ from pai_const import code2hai, code2disp
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--dev", type=str, help="device")
     parser.add_argument("--paifu", type=str, help="paifu file")
     parser.add_argument("--kyoku", type=int, default=0, help="kyoku index")
     parser.add_argument("--hidden", type=int, default=700, help="hidden size")
+    parser.add_argument("--dev", type=str, help="device")
     parser.add_argument("model", help="model file")
     return parser.parse_args()
 
