@@ -14,6 +14,7 @@ def parse_args():
     parser.add_argument("--channels", type=int, nargs=2, default=(32, 64), help="# of channels in convolution layers")
     parser.add_argument("--kernel_sizes", type=int, nargs=2, default=(5, 5), help="kernel sizes in convolution layers")
     parser.add_argument("--batch_size", type=int, default=64, help="batch size")
+    parser.add_argument("--onehot", action="store_true", default=False, help="use one-hot encoding")
     parser.add_argument("--dev", type=str, help="device")
     parser.add_argument("files", nargs="+", help="paifu files")
     return parser.parse_args()
@@ -28,7 +29,7 @@ elif torch.backends.mps.is_available():
     device = torch.device("mps")
 print(f"device: {device}")
 
-input_data, target_data, _ = load_paifu_data(args.files)  # drop kyoku_steps
+input_data, target_data, _ = load_paifu_data(args.files, args.onehot)  # drop kyoku_steps
 dataset = make_dataset(input_data, target_data, device=device)
 train_loader, test_loader = make_dataloader(dataset, batch_size=args.batch_size)
 

@@ -122,7 +122,7 @@ class Player:
         ret = []
         if onehot:
             for idx in range(num):
-                v = [0] * len(code2disp) - 1
+                v = [0] * (len(code2disp) - 1)
                 if idx < len(lst):
                     v[lst[idx] - 1] = 1
                 ret.extend(v)

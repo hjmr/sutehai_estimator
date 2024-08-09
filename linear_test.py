@@ -14,6 +14,7 @@ def parse_args():
     parser.add_argument("--paifu", type=str, help="paifu file")
     parser.add_argument("--kyoku", type=int, default=0, help="kyoku index")
     parser.add_argument("--hidden", type=int, default=700, help="hidden size")
+    parser.add_argument("--onehot", action="store_true", default=False, help="use one-hot encoding")
     parser.add_argument("--dev", type=str, help="device")
     parser.add_argument("model", help="model file")
     return parser.parse_args()
@@ -31,7 +32,7 @@ print(f"device: {device}")
 # load paifu data
 json_data = load_paifu(args.paifu)
 kyoku_data = extract_one_kyoku(json_data, args.kyoku)
-inp, tgt, stps = make_data_for_one_kyoku(kyoku_data)
+inp, tgt, stps = make_data_for_one_kyoku(kyoku_data, args.onehot)
 dataset = make_dataset(inp, tgt, device=device)
 
 # prepare kyoku for display
