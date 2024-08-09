@@ -1,3 +1,4 @@
+import itertools
 from pai_const import code2disp
 
 sutehai_flags = {
@@ -81,24 +82,20 @@ class Player:
             return 0 < (flag % 2)
 
         def is_naki(flag):
-            return 0 < ((flag % 4) // 2)
+            return 0 < ((flag // 2) % 2)
 
         def is_richi(flag):
-            return 0 < ((flag % 8) // 4)
+            return 0 < ((flag // 4) % 2)
 
         disp_tehai = [code2disp[self.tehai[idx] if idx < len(self.tehai) else 0] for idx in range(13)]
         disp_furo = [code2disp[self.furo[idx] if idx < len(self.furo) else 0] for idx in range(16)]
         # sutehai display
+        # fmt: off
         disp_sutehai = [code2disp[self.sutehai[idx] if idx < len(self.sutehai) else 0] for idx in range(25)]
-        disp_richi_flags = [
-            is_richi(self.sutehai_flags[idx]) if idx < len(self.sutehai_flags) else 0 for idx in range(25)
-        ]
-        disp_naki_flags = [
-            is_naki(self.sutehai_flags[idx]) if idx < len(self.sutehai_flags) else 0 for idx in range(25)
-        ]
-        disp_tsumogiri_flags = [
-            is_tsumogiri(self.sutehai_flags[idx]) if idx < len(self.sutehai_flags) else 0 for idx in range(25)
-        ]
+        disp_richi_flags     = [is_richi(self.sutehai_flags[idx])     if idx < len(self.sutehai_flags) else 0 for idx in range(25)]
+        disp_naki_flags      = [is_naki(self.sutehai_flags[idx])      if idx < len(self.sutehai_flags) else 0 for idx in range(25)]
+        disp_tsumogiri_flags = [is_tsumogiri(self.sutehai_flags[idx]) if idx < len(self.sutehai_flags) else 0 for idx in range(25)]
+        # fmt: on
         disp_sutehai_flags = [
             "R" if r else "v" if n else "*" if t else " "
             for r, n, t in zip(disp_richi_flags, disp_naki_flags, disp_tsumogiri_flags)
@@ -121,28 +118,32 @@ class Player:
         )
         print(self.name + ":" + disp_str)
 
-    def _make_pai_data(self, lst, val_num, onehot=False):
+    def _make_pai_data(self, lst, num, onehot=False):
         ret = []
         if onehot:
-            for idx in range(val_num):
+            for idx in range(num):
                 v = [0] * (len(code2disp) - 1)
                 if idx < len(lst):
                     v[lst[idx] - 1] = 1
                 ret.extend(v)
         else:
-            ret = [lst[idx] if idx < len(lst) else 0 for idx in range(val_num)]
+            ret = [lst[idx] if idx < len(lst) else 0 for idx in range(num)]
+        return ret
+
+    def _make_flags_data(self, lst, num, func, onehot=False):
+        ret = []
+        if onehot:
+            ret = [[1, func(lst[idx])] if idx < len(lst) else [0, 0] for idx in range(num)]
+            ret = list(itertools.chain.from_iterable(ret))
+        else:
+            ret = [func(lst[idx]) if idx < len(lst) else 0 for idx in range(num)]
         return ret
 
     def get_tehai_data(self, onehot=False):
         return self._make_pai_data(self.tehai, 13, onehot)
 
     def get_tsumo_data(self, onehot=False):
-        ret = [self.tsumo]
-        if onehot:
-            ret = [0] * (len(code2disp) - 1)
-            if 0 < self.tsumo and self.tsumo <= len(code2disp):
-                ret[self.tsumo - 1] = 1
-        return ret
+        return self._make_pai_data([self.tsumo], 1, onehot)
 
     def get_furo_data(self, onehot=False):
         return self._make_pai_data(self.furo, 16, onehot)
@@ -150,23 +151,23 @@ class Player:
     def get_sutehai_data(self, onehot=False):
         return self._make_pai_data(self.sutehai, 25, onehot)
 
-    def get_tsumogiri_flags(self):
+    def get_tsumogiri_flags(self, onehot=False):
         def is_tsumogiri(flag):
-            return 2 if 0 < (flag % 2) else 1
+            return flag % 2
 
-        return [is_tsumogiri(self.sutehai_flags[idx]) if idx < len(self.sutehai_flags) else 0 for idx in range(25)]
+        return self._make_flags_data(self.sutehai_flags, 25, is_tsumogiri, onehot)
 
-    def get_naki_flags(self):
+    def get_naki_flags(self, onehot=False):
         def is_naki(flag):
-            return 2 if 0 < ((flag % 4) // 2) else 1
+            return (flag // 2) % 2
 
-        return [is_naki(self.sutehai_flags[idx]) if idx < len(self.sutehai_flags) else 0 for idx in range(25)]
+        return self._make_flags_data(self.sutehai_flags, 25, is_naki, onehot)
 
-    def get_richi_flags(self):
+    def get_richi_flags(self, onehot=False):
         def is_richi(flag):
-            return 2 if 0 < ((flag % 8) // 4) else 1
+            return (flag // 4) % 2
 
-        return [is_richi(self.sutehai_flags[idx]) if idx < len(self.sutehai_flags) else 0 for idx in range(25)]
+        return self._make_flags_data(self.sutehai_flags, 25, is_richi, onehot)
 
     def __str__(self):
         # fmt: off
