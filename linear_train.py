@@ -2,7 +2,7 @@ import argparse
 import torch
 
 from paifu_data import load_paifu_data, make_dataset, make_dataloader, train_model, test_model
-from pai_const import code2hai
+from pai_const import code2pai
 
 from linear_model import LinearModel
 
@@ -30,7 +30,7 @@ dataset = make_dataset(input_data, target_data, device=device)
 train_loader, test_loader = make_dataloader(dataset, batch_size=args.batch_size)
 
 input_dim = len(input_data[0])
-output_dim = len(code2hai)
+output_dim = len(code2pai)
 
 model = LinearModel(input_dim, args.hidden, output_dim, device=device)
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)

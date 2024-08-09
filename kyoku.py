@@ -1,5 +1,5 @@
 from player import Player
-from pai_const import code2hai, code2disp
+from pai_const import code2pai, code2disp
 
 
 class Kyoku:
@@ -68,9 +68,9 @@ class Kyoku:
     def do_kyokustart(self, args):
         self.oya = self.players[args[1]]
         self.honba = args[2]
-        self.bakaze = code2hai.index(args[4])
+        self.bakaze = code2pai.index(args[4])
         for idx in range(4):
-            self.players[self.player_names[idx]].kaze = code2hai.index(args[5:][idx])
+            self.players[self.player_names[idx]].kaze = code2pai.index(args[5:][idx])
         return True
 
     def do_kyokuend(self, args):
@@ -83,27 +83,27 @@ class Kyoku:
     def do_haipai(self, args):
         player = self.get_player(args[0])
         haipai_str = args[1]
-        haipai = [code2hai.index(haipai_str[idx : idx + 2]) for idx in range(0, len(haipai_str), 2)]
+        haipai = [code2pai.index(haipai_str[idx : idx + 2]) for idx in range(0, len(haipai_str), 2)]
         player.do_haipai(haipai)
         return True
 
     def do_tsumo(self, args):
         player = self.get_player(args[0])
-        tsumo_code = code2hai.index(args[2])
+        tsumo_code = code2pai.index(args[2])
         player.do_tsumo(tsumo_code)
         return True
 
     def do_sutehai(self, args):
         player = self.get_player(args[0])
-        sutehai_code = code2hai.index(args[1])
+        sutehai_code = code2pai.index(args[1])
         tsumogiri = True if len(args) == 3 and args[2] == "tsumogiri" else False
         player.do_sutehai(sutehai_code, tsumogiri)
         self.was_sutehai = True
         return True
 
     def do_dora(self, args):
-        if args[1] in code2hai:
-            dora_code = code2hai.index(args[1])
+        if args[1] in code2pai:
+            dora_code = code2pai.index(args[1])
             self.dora.append(dora_code)
         return True
 
@@ -115,8 +115,8 @@ class Kyoku:
         player = self.get_player(args[0])
         open_funcs = {"[": player.do_open_kakan, "(": player.do_open_ankan, "<": player.do_open_ponchi}
         tedashi_str = args[1][1:-1]
-        tedashi_code = [code2hai.index(tedashi_str[idx : idx + 2]) for idx in range(0, len(tedashi_str), 2)]
-        naki_code = code2hai.index(args[2]) if len(args) == 3 else 0
+        tedashi_code = [code2pai.index(tedashi_str[idx : idx + 2]) for idx in range(0, len(tedashi_str), 2)]
+        naki_code = code2pai.index(args[2]) if len(args) == 3 else 0
         open_funcs[open_flag](tedashi_code, naki_code)
         return True
 
@@ -157,7 +157,7 @@ class Kyoku:
 
         if 0 < len(self.teban):
             dora_data = [self.dora[idx] if idx < len(self.dora) else 0 for idx in range(4)]
-            current_data.extend(nlbs(dora_data, len(code2hai) - 1))
+            current_data.extend(nlbs(dora_data, len(code2pai) - 1))
 
             teban_idx = self.player_names.index(self.teban[-1].name)
             for rel_idx in range(4):
@@ -167,11 +167,11 @@ class Kyoku:
 
                 # 手番のプレイヤーの手牌
                 if rel_idx == 0:  # teban
-                    current_data.extend(nlbs(player.get_tehai_data(), len(code2hai) - 1))
-                    current_data.append(player.get_tsumo_data() / (len(code2hai) - 1))
+                    current_data.extend(nlbs(player.get_tehai_data(), len(code2pai) - 1))
+                    current_data.extend(nlbs(player.get_tsumo_data(), len(code2pai) - 1))
 
-                current_data.extend(nlbs(player.get_furo_data(), len(code2hai) - 1))
-                current_data.extend(nlbs(player.get_sutehai_data(), len(code2hai) - 1))
+                current_data.extend(nlbs(player.get_furo_data(), len(code2pai) - 1))
+                current_data.extend(nlbs(player.get_sutehai_data(), len(code2pai) - 1))
                 current_data.extend(nlbs(player.get_tsumogiri_flags(), 2))
                 current_data.extend(nlbs(player.get_richi_flags(), 2))
                 current_data.extend(nlbs(player.get_naki_flags(), 2))

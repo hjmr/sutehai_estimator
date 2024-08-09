@@ -13,7 +13,7 @@ code2disp = [
 # fmt : on
 
 # fmt: off
-code2hai = [
+code2pai = [
     "0",
     # 萬子
     "1m", "2m", "3m", "4m", "5m", "5M", "6m", "7m", "8m", "9m",

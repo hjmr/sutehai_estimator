@@ -6,7 +6,7 @@ from cnn_model import CnnModel
 from kyoku import Kyoku
 from paifu_utils import load_paifu, extract_one_kyoku
 from paifu_data import make_data_for_one_kyoku, make_dataset, make_dataloader
-from pai_const import code2hai, code2disp
+from pai_const import code2pai, code2disp
 
 
 def parse_args():
@@ -42,7 +42,7 @@ kyoku = Kyoku(kyoku_data)
 
 # load trained model
 model = CnnModel(
-    len(code2hai),
+    len(code2pai),
     features=args.features,
     hidden_dim=args.hidden,
     channels=tuple(args.channels),

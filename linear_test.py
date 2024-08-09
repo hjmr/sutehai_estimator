@@ -6,7 +6,7 @@ from linear_model import LinearModel
 from kyoku import Kyoku
 from paifu_utils import load_paifu, extract_one_kyoku
 from paifu_data import make_data_for_one_kyoku, make_dataset, make_dataloader
-from pai_const import code2hai, code2disp
+from pai_const import code2pai, code2disp
 
 
 def parse_args():
@@ -39,7 +39,7 @@ kyoku = Kyoku(kyoku_data)
 
 # load trained model
 input_dim = len(inp[0])
-output_dim = len(code2hai)
+output_dim = len(code2pai)
 model = LinearModel(input_dim, args.hidden, output_dim, device=device)
 model.load_state_dict(torch.load(args.model))
 

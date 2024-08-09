@@ -2,7 +2,7 @@ import argparse
 import torch
 
 from paifu_data import load_paifu_data, make_dataset, make_dataloader, train_model, test_model
-from pai_const import code2hai
+from pai_const import code2pai
 
 from cnn_model import CnnModel
 
@@ -33,7 +33,7 @@ dataset = make_dataset(input_data, target_data, device=device)
 train_loader, test_loader = make_dataloader(dataset, batch_size=args.batch_size)
 
 model = CnnModel(
-    len(code2hai),
+    len(code2pai),
     features=args.features,
     hidden_dim=args.hidden,
     channels=tuple(args.channels),

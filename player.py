@@ -121,17 +121,34 @@ class Player:
         )
         print(self.name + ":" + disp_str)
 
-    def get_tehai_data(self):
-        return [self.tehai[idx] if idx < len(self.tehai) else 0 for idx in range(13)]
+    def _make_pai_data(self, lst, val_num, onehot=False):
+        ret = []
+        if onehot:
+            for idx in range(val_num):
+                v = [0] * (len(code2disp) - 1)
+                if idx < len(lst):
+                    v[lst[idx] - 1] = 1
+                ret.extend(v)
+        else:
+            ret = [lst[idx] if idx < len(lst) else 0 for idx in range(val_num)]
+        return ret
 
-    def get_tsumo_data(self):
-        return self.tsumo
+    def get_tehai_data(self, onehot=False):
+        return self._make_pai_data(self.tehai, 13, onehot)
 
-    def get_furo_data(self):
-        return [self.furo[idx] if idx < len(self.furo) else 0 for idx in range(16)]
+    def get_tsumo_data(self, onehot=False):
+        ret = [self.tsumo]
+        if onehot:
+            ret = [0] * (len(code2disp) - 1)
+            if 0 < self.tsumo and self.tsumo <= len(code2disp):
+                ret[self.tsumo - 1] = 1
+        return ret
 
-    def get_sutehai_data(self):
-        return [self.sutehai[idx] if idx < len(self.sutehai) else 0 for idx in range(25)]
+    def get_furo_data(self, onehot=False):
+        return self._make_pai_data(self.furo, 16, onehot)
+
+    def get_sutehai_data(self, onehot=False):
+        return self._make_pai_data(self.sutehai, 25, onehot)
 
     def get_tsumogiri_flags(self):
         def is_tsumogiri(flag):
