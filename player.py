@@ -122,12 +122,12 @@ class Player:
         ret = []
         if onehot:
             for idx in range(num):
-                v = [0] * (len(code2disp) - 1)
+                v = [0] * len(code2disp) - 1
                 if idx < len(lst):
                     v[lst[idx] - 1] = 1
                 ret.extend(v)
         else:
-            ret = [lst[idx] if idx < len(lst) else 0 for idx in range(num)]
+            ret = [lst[idx] / (len(code2disp) - 1) if idx < len(lst) else 0 for idx in range(num)]
         return ret
 
     def _make_flags_data(self, lst, num, func, onehot=False):
@@ -136,7 +136,7 @@ class Player:
             ret = [[1, func(lst[idx])] if idx < len(lst) else [0, 0] for idx in range(num)]
             ret = list(itertools.chain.from_iterable(ret))
         else:
-            ret = [func(lst[idx]) if idx < len(lst) else 0 for idx in range(num)]
+            ret = [(func(lst[idx]) + 1) / 2 if idx < len(lst) else 0 for idx in range(num)]
         return ret
 
     def get_tehai_data(self, onehot=False):

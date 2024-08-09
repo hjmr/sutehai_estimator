@@ -149,15 +149,20 @@ class Kyoku:
         for player_name in self.player_names:
             self.players[player_name].show()
 
-    def get_data(self):
-        def nlbs(lst, size):  # normalize list by size
-            return [v / size for v in lst]
-
+    def get_data(self, onehot=False):
         current_data = []
 
         if 0 < len(self.teban):
-            dora_data = [self.dora[idx] if idx < len(self.dora) else 0 for idx in range(4)]
-            current_data.extend(nlbs(dora_data, len(code2pai) - 1))
+            dora_data = []
+            if onehot:
+                for idx in range(4):
+                    dora = [0] * (len(code2pai) - 1)
+                    if idx < len(self.dora):
+                        dora[self.dora[idx] - 1] = 1
+                    dora_data.extend(dora)
+            else:
+                dora_data = [self.dora[idx] if idx < len(self.dora) else 0 for idx in range(4)]
+            current_data.extend(dora_data)
 
             teban_idx = self.player_names.index(self.teban[-1].name)
             for rel_idx in range(4):
@@ -167,13 +172,13 @@ class Kyoku:
 
                 # 手番のプレイヤーの手牌
                 if rel_idx == 0:  # teban
-                    current_data.extend(nlbs(player.get_tehai_data(), len(code2pai) - 1))
-                    current_data.extend(nlbs(player.get_tsumo_data(), len(code2pai) - 1))
+                    current_data.extend(player.get_tehai_data(onehot))
+                    current_data.extend(player.get_tsumo_data(onehot))
 
-                current_data.extend(nlbs(player.get_furo_data(), len(code2pai) - 1))
-                current_data.extend(nlbs(player.get_sutehai_data(), len(code2pai) - 1))
-                current_data.extend(nlbs(player.get_tsumogiri_flags(), 2))
-                current_data.extend(nlbs(player.get_richi_flags(), 2))
-                current_data.extend(nlbs(player.get_naki_flags(), 2))
+                current_data.extend(player.get_furo_data(onehot))
+                current_data.extend(player.get_sutehai_data(onehot))
+                current_data.extend(player.get_tsumogiri_flags(onehot))
+                current_data.extend(player.get_richi_flags(onehot))
+                current_data.extend(player.get_naki_flags(onehot))
 
         return current_data
