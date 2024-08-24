@@ -14,7 +14,8 @@ def parse_args():
     parser.add_argument("--features", type=int, default=3328, help="# of features (output of convolution layers)")
     parser.add_argument("--hidden", type=int, default=256, help="# of hidden units in fully connected layer")
     parser.add_argument("--channels", type=int, nargs=2, default=(32, 64), help="# of channels in convolution layers")
-    parser.add_argument("--kernel_sizes", type=int, nargs=2, default=(5, 5), help="kernel sizes in convolution layers")
+    parser.add_argument("--conv_kernels", type=int, nargs=2, default=(5, 5), help="kernel sizes in convolution layers")
+    parser.add_argument("--pooling_kernels", type=int, nargs=2, default=(3, 3), help="kernel sizes in pooling layers")
     parser.add_argument("--paifu", type=str, help="paifu file")
     parser.add_argument("--kyoku", type=int, default=0, help="kyoku index")
     parser.add_argument("--onehot", action="store_true", default=False, help="use one-hot encoding")
@@ -47,7 +48,8 @@ model = CnnModel(
     features=args.features,
     hidden_dim=args.hidden,
     channels=tuple(args.channels),
-    kernel_sizes=tuple(args.kernel_sizes),
+    conv_kernels=tuple(args.conv_kernels),
+    pooling_kernels=tuple(args.pooling_kernels),
     device=device,
 )
 model.load_state_dict(torch.load(args.model))

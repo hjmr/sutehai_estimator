@@ -12,7 +12,8 @@ def parse_args():
     parser.add_argument("--features", type=int, default=3328, help="# of features (output of convolution layers)")
     parser.add_argument("--hidden", type=int, default=256, help="# of hidden units in fully connected layer")
     parser.add_argument("--channels", type=int, nargs=2, default=(32, 64), help="# of channels in convolution layers")
-    parser.add_argument("--kernel_sizes", type=int, nargs=2, default=(5, 5), help="kernel sizes in convolution layers")
+    parser.add_argument("--conv_kernels", type=int, nargs=2, default=(5, 5), help="kernel sizes in convolution layers")
+    parser.add_argument("--pooling_kernels", type=int, nargs=2, default=(3, 3), help="kernel sizes in pooling layers")
     parser.add_argument("--batch_size", type=int, default=64, help="batch size")
     parser.add_argument("--onehot", action="store_true", default=False, help="use one-hot encoding")
     parser.add_argument("--dev", type=str, help="device")
@@ -38,7 +39,8 @@ model = CnnModel(
     features=args.features,
     hidden_dim=args.hidden,
     channels=tuple(args.channels),
-    kernel_sizes=tuple(args.kernel_sizes),
+    conv_kernels=tuple(args.conv_kernels),
+    pooling_kernels=tuple(args.pooling_kernels),
     device=device,
 )
 total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)

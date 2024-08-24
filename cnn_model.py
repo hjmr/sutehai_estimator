@@ -2,17 +2,26 @@ import torch
 
 
 class CnnModel(torch.nn.Module):
-    def __init__(self, classes, features=3328, hidden_dim=256, channels=(32, 64), kernel_sizes=(5, 5), device="cpu"):
+    def __init__(
+        self,
+        classes,
+        features=3328,
+        hidden_dim=256,
+        channels=(32, 64),
+        conv_kernels=(5, 5),
+        pooling_kernels=(3, 3),
+        device="cpu",
+    ):
         super(CnnModel, self).__init__()
         # Layer 1
-        self.conv1 = torch.nn.Conv1d(1, channels[0], kernel_sizes[0], padding=1, device=device)
+        self.conv1 = torch.nn.Conv1d(1, channels[0], conv_kernels[0], padding=1, device=device)
         self.relu1 = torch.nn.ReLU()
-        self.maxpool1 = torch.nn.MaxPool1d(kernel_size=3)
+        self.maxpool1 = torch.nn.MaxPool1d(kernel_size=pooling_kernels[0])
 
         # Layer 2
-        self.conv2 = torch.nn.Conv1d(channels[0], channels[1], kernel_sizes[1], padding=1, device=device)
+        self.conv2 = torch.nn.Conv1d(channels[0], channels[1], conv_kernels[1], padding=1, device=device)
         self.relu2 = torch.nn.ReLU()
-        self.maxpool2 = torch.nn.MaxPool1d(kernel_size=3)
+        self.maxpool2 = torch.nn.MaxPool1d(kernel_size=pooling_kernels[1])
 
         # Layer 3: Fully Connected
         self.fc1 = torch.nn.Linear(in_features=features, out_features=hidden_dim, device=device)
