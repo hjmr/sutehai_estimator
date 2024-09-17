@@ -53,12 +53,10 @@ class Player:
         self.sutehai_flags[-1] += sutehai_flags["richi"]
 
     def do_open_kakan(self, tedashi, naki):
-        if self.kyoku.teban[-2] != self:
-            # self.kyoku.teban[-2].sutehai.pop() # remove the last sutehai
-            self.kyoku.teban[-2].sutehai_flags[-1] += sutehai_flags["naki"]
-        else:
-            self.tehai.remove(naki)
-            self.tsumo = 0
+        if 0 < self.tsumo:
+            self.tehai.append(self.tsumo)
+        self.tsumo = 0
+        self.tehai.remove(naki)
         self.furo.append(naki)
 
     def do_open_ankan(self, tedashi, naki):
