@@ -60,11 +60,11 @@ class Player:
         self.furo.append(naki)
 
     def do_open_ankan(self, tedashi, naki):
+        if 0 < self.tsumo:
+            self.tehai.append(self.tsumo)
+        self.tsumo = 0
         for hai in tedashi:
-            if hai in self.tehai:
-                self.tehai.remove(hai)
-            elif hai == self.tsumo:
-                self.tsumo = 0
+            self.tehai.remove(hai)
             self.furo.append(hai)
 
     def do_open_ponchi(self, tedashi, naki):
