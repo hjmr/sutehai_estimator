@@ -1,7 +1,7 @@
 import argparse
 import torch
 
-from ml_utils.pai_const import code2pai
+from ml_utils import code2pai
 from paifu_data import load_paifu_data, make_dataset, make_dataloader, train_model, test_model
 
 from linear_model import LinearModel

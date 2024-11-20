@@ -3,9 +3,9 @@ import torch
 
 from linear_model import LinearModel
 
-from ml_utils.kyoku import Kyoku
-from ml_utils.paifu_utils import load_paifu, extract_one_kyoku
-from ml_utils.pai_const import code2pai, code2disp
+from ml_utils import Kyoku
+from ml_utils import load_paifu, extract_one_kyoku
+from ml_utils import code2pai, code2disp
 from paifu_data import make_data_for_one_kyoku, make_dataset, make_dataloader
 
 
