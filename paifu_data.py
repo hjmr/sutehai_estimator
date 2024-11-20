@@ -2,8 +2,8 @@ import argparse
 import torch
 import torch.utils
 
-from kyoku import Kyoku
-from paifu_utils import load_paifu, count_kyoku, extract_one_kyoku
+from ml_utils.kyoku import Kyoku
+from ml_utils.paifu_utils import load_paifu, count_kyoku, extract_one_kyoku
 
 
 def make_data_for_one_kyoku(kyoku_json, onehot=False):

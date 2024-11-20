@@ -3,10 +3,10 @@ import torch
 
 from linear_model import LinearModel
 
-from kyoku import Kyoku
-from paifu_utils import load_paifu, extract_one_kyoku
+from ml_utils.kyoku import Kyoku
+from ml_utils.paifu_utils import load_paifu, extract_one_kyoku
+from ml_utils.pai_const import code2pai, code2disp
 from paifu_data import make_data_for_one_kyoku, make_dataset, make_dataloader
-from pai_const import code2pai, code2disp
 
 
 def parse_args():
