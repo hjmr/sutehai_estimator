@@ -3,11 +3,11 @@ import torch
 import torch.utils
 
 from ml_utils import Kyoku
-from ml_utils import load_paifu, count_kyoku, extract_one_kyoku
+from ml_utils import load_paifu, extract_one_kyoku, get_game_info
 
 
-def make_data_for_one_kyoku(kyoku_json, onehot=False):
-    kyoku = Kyoku(kyoku_json)
+def make_data_for_one_kyoku(kyoku_json: list, gameid: str, player_names: dict, onehot=False):
+    kyoku = Kyoku(kyoku_json, gameid, player_names)
     stps = []
     inp = []
     tgt = []
@@ -27,10 +27,13 @@ def load_paifu_data(files, onehot=False):
 
     for f in files:
         json_data = load_paifu(f)
-        kyoku_num = count_kyoku(json_data)
+        game_info = get_game_info(json_data)
+        kyoku_num = game_info["max_kyoku_num"]
+        gameid = game_info["gameid"]
+        player_names = game_info["player_names"]
         for idx in range(kyoku_num):
             kyoku_json = extract_one_kyoku(json_data, idx)
-            inp, tgt, stp = make_data_for_one_kyoku(kyoku_json, onehot)
+            inp, tgt, stp = make_data_for_one_kyoku(kyoku_json, gameid, player_names, onehot)
             kyoku_steps.extend(stp)
             input_data.extend(inp)
             target_data.extend(tgt)

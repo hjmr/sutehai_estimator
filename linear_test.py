@@ -6,7 +6,7 @@ from linear_model import LinearModel
 from ml_utils import Kyoku
 from ml_utils import load_paifu, extract_one_kyoku
 from ml_utils import code2pai, code2disp
-from paifu_data import make_data_for_one_kyoku, make_dataset, make_dataloader
+from paifu_data import make_data_for_one_kyoku, make_dataset
 
 
 def parse_args():
