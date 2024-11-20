@@ -3,20 +3,25 @@ from pai_const import code2pai, code2disp
 
 
 class Kyoku:
-    def __init__(self, kyoku_data: list):
-        self.player_names = ["A0", "B0", "C0", "D0"]
+    def __init__(self, kyoku_data: list, player_names: dict = None):
+        self.player_codes = ["A0", "B0", "C0", "D0"]
         self.players = {}
-        for player_name in self.player_names:
-            self.players[player_name] = Player(player_name, self)
+        for p_code in self.player_codes:
+            self.players[p_code] = Player(p_code, self)
+            if player_names is not None:
+                self.players[p_code].name = player_names[p_code]
 
-        self.kyoku_data = kyoku_data
-        self.current_step = 0
-        self.teban = []
         self.oya = None
         self.dora = []
         self.honba = 0
         self.bakaze = 0
         self.ryukyoku = False
+
+        self.kyoku_data = kyoku_data
+        self.current_step = 0
+        self.teban = []
+
+        self.was_tsumo = False
         self.was_sutehai = False
 
         # fmt: off
@@ -39,8 +44,8 @@ class Kyoku:
 
     # fmt: on
 
-    def get_player(self, name):
-        player = self.players[name]
+    def get_player(self, p_code):
+        player = self.players[p_code]
         if len(self.teban) == 0 or self.teban[-1] != player:
             self.teban.append(player)
         return player
@@ -48,6 +53,8 @@ class Kyoku:
     def step(self):
         playing = True
         self.was_sutehai = False
+        self.was_tsumo = False
+
         entry = self.kyoku_data[self.current_step]
         if entry["cmd"] not in self.commands:
             raise ValueError(f"Invalid command: {entry['cmd']}")
@@ -70,7 +77,7 @@ class Kyoku:
         self.honba = args[2]
         self.bakaze = code2pai.index(args[4])
         for idx in range(4):
-            self.players[self.player_names[idx]].kaze = code2pai.index(args[5:][idx])
+            self.players[self.player_codes[idx]].kaze = code2pai.index(args[5:][idx])
         return True
 
     def do_kyokuend(self, args):
@@ -91,6 +98,7 @@ class Kyoku:
         player = self.get_player(args[0])
         tsumo_code = code2pai.index(args[2])
         player.do_tsumo(tsumo_code)
+        self.was_tsumo = True
         return True
 
     def do_sutehai(self, args):
@@ -146,8 +154,8 @@ class Kyoku:
         disp_dora = "".join([code2disp[dora] for dora in self.dora])
         if 0 < len(self.teban):
             print("teban: " + self.teban[-1].name + " dora: " + disp_dora)
-        for player_name in self.player_names:
-            self.players[player_name].show()
+        for p_code in self.player_codes:
+            self.players[p_code].show()
 
     def get_data(self, onehot=False):
         current_data = []
@@ -164,11 +172,11 @@ class Kyoku:
                 dora_data = [self.dora[idx] if idx < len(self.dora) else 0 for idx in range(4)]
             current_data.extend(dora_data)
 
-            teban_idx = self.player_names.index(self.teban[-1].name)
+            teban_idx = self.player_codes.index(self.teban[-1].code)
             for rel_idx in range(4):
                 idx = (teban_idx + rel_idx) % 4
-                player_name = self.player_names[idx]
-                player = self.players[player_name]
+                p_code = self.player_codes[idx]
+                player = self.players[p_code]
 
                 # 手番のプレイヤーの手牌
                 if rel_idx == 0:  # teban

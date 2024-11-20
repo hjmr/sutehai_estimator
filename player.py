@@ -10,8 +10,9 @@ sutehai_flags = {
 
 
 class Player:
-    def __init__(self, name, kyoku):
-        self.name = name
+    def __init__(self, code, kyoku):
+        self.code = code
+        self.name = code
         self.tehai = []
         self.tsumo = 0
         self.furo = []
@@ -114,7 +115,7 @@ class Player:
             + "|"
             + str(self.point)
         )
-        print(self.name + ":" + disp_str)
+        print(f"{self.name:<10}\t" + ":" + disp_str)
 
     def _make_pai_data(self, lst, num, onehot=False):
         ret = []

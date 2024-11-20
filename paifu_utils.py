@@ -15,6 +15,14 @@ def count_kyoku(json_data):
     return cnt
 
 
+def extract_player_names(json_data):
+    player_names = {}
+    for entry in json_data:
+        if entry["cmd"] == "player":
+            player_names[entry["args"][0]] = entry["args"][1]
+    return player_names
+
+
 def extract_one_kyoku(json_data, kyoku_num):
     max_kyoku_num = count_kyoku(json_data)
     if kyoku_num < 0:
