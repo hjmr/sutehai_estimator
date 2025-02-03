@@ -1,10 +1,12 @@
 import argparse
 import torch
 
-from ml_utils import code2pai
-from paifu_data import load_paifu_data, make_dataset, make_dataloader, train_model, test_model
+from cnn1d_model import Cnn1DModel
 
-from cnn_model import CnnModel
+from ml_utils import Kyoku
+from ml_utils import load_paifu, extract_one_kyoku
+from ml_utils import code2pai, code2disp
+from paifu_data import make_data_for_one_kyoku, make_dataset
 
 
 def parse_args():
@@ -14,10 +16,11 @@ def parse_args():
     parser.add_argument("--channels", type=int, nargs=2, default=(32, 64), help="# of channels in convolution layers")
     parser.add_argument("--conv_kernels", type=int, nargs=2, default=(5, 5), help="kernel sizes in convolution layers")
     parser.add_argument("--pooling_kernels", type=int, nargs=2, default=(3, 3), help="kernel sizes in pooling layers")
-    parser.add_argument("--batch_size", type=int, default=64, help="batch size")
+    parser.add_argument("--paifu", type=str, help="paifu file")
+    parser.add_argument("--kyoku", type=int, default=0, help="kyoku index")
     parser.add_argument("--onehot", action="store_true", default=False, help="use one-hot encoding")
     parser.add_argument("--dev", type=str, help="device")
-    parser.add_argument("files", nargs="+", help="paifu files")
+    parser.add_argument("model", help="model file")
     return parser.parse_args()
 
 
@@ -30,11 +33,17 @@ elif torch.backends.mps.is_available():
     device = torch.device("mps")
 print(f"device: {device}")
 
-input_data, target_data, _ = load_paifu_data(args.files, args.onehot)  # drop kyoku_steps
-dataset = make_dataset(input_data, target_data, device=device)
-train_loader, test_loader = make_dataloader(dataset, batch_size=args.batch_size)
+# load paifu data
+json_data = load_paifu(args.paifu)
+kyoku_data = extract_one_kyoku(json_data, args.kyoku)
+inp, tgt, stps = make_data_for_one_kyoku(kyoku_data, args.onehot)
+dataset = make_dataset(inp, tgt, device=device)
 
-model = CnnModel(
+# prepare kyoku for display
+kyoku = Kyoku(kyoku_data)
+
+# load trained model
+model = Cnn1DModel(
     len(code2pai),
     features=args.features,
     hidden_dim=args.hidden,
@@ -43,14 +52,16 @@ model = CnnModel(
     pooling_kernels=tuple(args.pooling_kernels),
     device=device,
 )
-total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-print(f"# of parameters: {total_params}")
+model.load_state_dict(torch.load(args.model))
 
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=1e-4)
-
-for epoch in range(1000):
-    loss = train_model(model, criterion, optimizer, train_loader)
-    acc = test_model(model, test_loader)
-    print(f"epoch: {epoch}, loss: {loss}, acc: {acc}")
-torch.save(model.state_dict(), "cnn_model.pth")
+model.eval()
+with torch.no_grad():
+    for idx, (input, target) in enumerate(dataset):
+        input = input.view(1, -1)
+        outputs = model(input)
+        _, predicted = torch.max(outputs, 1)
+        print("--------------------------------------------------")
+        kyoku.fast_forward(stps[idx])
+        kyoku.show()
+        judge = "[OK]" if target.item() == predicted.item() else "*NG*"
+        print(f"{judge} target:{code2disp[target.item()]} predict:{code2disp[predicted.item()]}")

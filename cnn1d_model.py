@@ -1,7 +1,7 @@
 import torch
 
 
-class CnnModel(torch.nn.Module):
+class Cnn1DModel(torch.nn.Module):
     def __init__(
         self,
         classes,
@@ -12,7 +12,7 @@ class CnnModel(torch.nn.Module):
         pooling_kernels=(3, 3),
         device="cpu",
     ):
-        super(CnnModel, self).__init__()
+        super(Cnn1DModel, self).__init__()
         # Layer 1
         self.conv1 = torch.nn.Conv1d(1, channels[0], conv_kernels[0], padding=1, device=device)
         self.relu1 = torch.nn.ReLU()
